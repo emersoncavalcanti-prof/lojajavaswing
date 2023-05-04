@@ -19,24 +19,25 @@ public class RepProdutos {
         
         con = ConexaoMySql.getConexao(); 
         
-        String sql = "insert into tbproduto (descricao,"
-                 + "qtd,valor,codbarra) values "
+        String sql = "insert into produtos (descricao,"
+                 + "qtd,valor,codbarra,peso) values "
                  + "(?,?,?,?,?)";
          try{
              con.setAutoCommit(false);
              PreparedStatement stmt = con.prepareStatement(sql);
              
              stmt.setString(1, produto.getDescricao());
-             stmt.setDouble(3, produto.getQtd());
-             stmt.setDouble(4, produto.getValor());
-             stmt.setString(5, produto.getCodbarra());
+             stmt.setDouble(2, produto.getQtd());
+             stmt.setDouble(3, produto.getValor());
+             stmt.setString(4, produto.getCodbarra());
+             stmt.setDouble(5, produto.getPeso());
              
              stmt.execute();
              con.commit();
              ConexaoMySql.fecharConexao();
              
             return true;
-         }catch(SQLException ex){
+         }catch(Exception ex){
              try{
                  con.rollback();
                  System.err.println(ex.getMessage());
@@ -68,6 +69,7 @@ public class RepProdutos {
               produto.setQtd(rs.getDouble("qtd"));
               produto.setValor(rs.getDouble("valor"));
               produto.setCodbarra(rs.getString("codbarra"));
+              produto.setPeso(rs.getDouble("peso"));
               
               produtos.add(produto);
           }            
@@ -84,7 +86,7 @@ public class RepProdutos {
 
         con = ConexaoMySql.getConexao();
         String sql = "update tbproduto set descricao = ?, "
-                + "valor = ?,qtd = ?, codbarra = ? where id = ?";
+                + "valor = ?,qtd = ?, codbarra = ?,peso = ? where id = ?";
         try {
             con.setAutoCommit(false);
             PreparedStatement stmt = con.prepareStatement(sql);
@@ -93,7 +95,8 @@ public class RepProdutos {
             stmt.setDouble(2, produto.getValor());
             stmt.setDouble(3, produto.getQtd());
             stmt.setString(4, produto.getCodbarra());
-            stmt.setInt(5, produto.getId());
+            stmt.setDouble(5, produto.getPeso());
+            stmt.setInt(6, produto.getId());
              
             stmt.execute();
 
@@ -116,7 +119,7 @@ public class RepProdutos {
 
     }  
   
-  public List<Produto> pesquisa(String valor, String tipoPesquisa){
+  public List<Produto> pesquisar(String valor, String tipoPesquisa){
       
       con = ConexaoMySql.getConexao();
       List<Produto> produtos = new ArrayList<>();
@@ -144,6 +147,7 @@ public class RepProdutos {
               produto.setDescricao(rs.getString("descricao"));
               produto.setQtd(rs.getDouble("qtd"));
               produto.setValor(rs.getDouble("valor"));
+              produto.setPeso(rs.getDouble("peso"));
               produto.setCodbarra(rs.getString("codbarra"));
               
               produtos.add(produto);
