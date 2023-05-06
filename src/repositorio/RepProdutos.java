@@ -55,7 +55,7 @@ public class RepProdutos {
       con = ConexaoMySql.getConexao();
       List<Produto> produtos = new ArrayList<>();
       
-      String sql = "select * from tbproduto order by id desc";
+      String sql = "select * from produtos order by id desc";
       
       try{
           Statement stmt = con.createStatement();
@@ -85,7 +85,7 @@ public class RepProdutos {
       public boolean atualizar(Produto produto) {
 
         con = ConexaoMySql.getConexao();
-        String sql = "update tbproduto set descricao = ?, "
+        String sql = "update produtos set descricao = ?, "
                 + "valor = ?,qtd = ?, codbarra = ?,peso = ? where id = ?";
         try {
             con.setAutoCommit(false);
@@ -127,13 +127,13 @@ public class RepProdutos {
       String sql = "";
       
       if(tipoPesquisa.equals("comeca")){
-       sql = "select * from tbproduto where descricao like '"+valor+"%'";
+       sql = "select * from produtos where descricao like '"+valor+"%'";
       }else if(tipoPesquisa.equals("contem")){
-       sql = "select * from tbproduto where descricao like '%"+valor+"%'";
+       sql = "select * from produtos where descricao like '%"+valor+"%'";
       }else if(tipoPesquisa.equals("barras")){
-       sql = "select * from tbproduto where codbarra = '"+valor+"'";
+       sql = "select * from produtos where codbarra = '"+valor+"'";
       }else if(tipoPesquisa.equals("codigo")){
-       sql = "select * from tbproduto where id = '"+valor+"'";
+       sql = "select * from produtos where id = '"+valor+"'";
       }
       
       try{
@@ -165,7 +165,7 @@ public class RepProdutos {
   public boolean excluir(int id){
       
       con = ConexaoMySql.getConexao();
-      String sql = "delete from tbproduto where id = ?";
+      String sql = "delete from produtos where id = ?";
       
       try{
           
