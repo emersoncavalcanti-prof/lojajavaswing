@@ -124,16 +124,12 @@ public class RepProdutos {
       con = ConexaoMySql.getConexao();
       List<Produto> produtos = new ArrayList<>();
       
-      String sql = "";
+      String sql = ""; 
       
-      if(tipoPesquisa.equals("comeca")){
-       sql = "select * from produtos where descricao like '"+valor+"%'";
-      }else if(tipoPesquisa.equals("contem")){
+       if(tipoPesquisa.equals("descricao")){
        sql = "select * from produtos where descricao like '%"+valor+"%'";
       }else if(tipoPesquisa.equals("barras")){
        sql = "select * from produtos where codbarra = '"+valor+"'";
-      }else if(tipoPesquisa.equals("codigo")){
-       sql = "select * from produtos where id = '"+valor+"'";
       }
       
       try{

@@ -4,6 +4,8 @@
  */
 package view;
 
+import java.awt.event.KeyEvent;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Produto;
@@ -16,6 +18,7 @@ import repositorio.RepProdutos;
 public class JDProdutos extends javax.swing.JDialog {
 
     RepProdutos repProduto = new RepProdutos();
+    List<Produto> produtos;
     
     /**
      * Creates new form JDProdutos
@@ -27,7 +30,8 @@ public class JDProdutos extends javax.swing.JDialog {
         jTextFieldCodigo.setEnabled(false);
         habilitarCampos(false);
         jTextFieldPesquisar.requestFocus();
-        preencherJTable();
+        produtos = repProduto.retornar();
+        preencherJTable(produtos);
     }
     
 
@@ -42,6 +46,7 @@ public class JDProdutos extends javax.swing.JDialog {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jTextFieldDescricao = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -56,8 +61,8 @@ public class JDProdutos extends javax.swing.JDialog {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButtonBarras = new javax.swing.JRadioButton();
+        jRadioButtonDescricao = new javax.swing.JRadioButton();
         jTextFieldPesquisar = new javax.swing.JTextField();
         jButtonSalvar = new javax.swing.JButton();
         jButtonAlterar = new javax.swing.JButton();
@@ -102,12 +107,20 @@ public class JDProdutos extends javax.swing.JDialog {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
         jLabel8.setText("Pesquisar");
 
-        jRadioButton1.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        jRadioButton1.setSelected(true);
-        jRadioButton1.setText("Código de barras");
+        buttonGroup1.add(jRadioButtonBarras);
+        jRadioButtonBarras.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        jRadioButtonBarras.setSelected(true);
+        jRadioButtonBarras.setText("Código de barras");
 
-        jRadioButton2.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        jRadioButton2.setText("Descrição");
+        buttonGroup1.add(jRadioButtonDescricao);
+        jRadioButtonDescricao.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        jRadioButtonDescricao.setText("Descrição");
+
+        jTextFieldPesquisar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldPesquisarKeyPressed(evt);
+            }
+        });
 
         jButtonSalvar.setText("Salvar");
         jButtonSalvar.addActionListener(new java.awt.event.ActionListener() {
@@ -117,8 +130,18 @@ public class JDProdutos extends javax.swing.JDialog {
         });
 
         jButtonAlterar.setText("Alterar");
+        jButtonAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAlterarActionPerformed(evt);
+            }
+        });
 
         jButtonExcluir.setText("Excluir");
+        jButtonExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonExcluirActionPerformed(evt);
+            }
+        });
 
         jButtonNovo.setText("Novo");
         jButtonNovo.addActionListener(new java.awt.event.ActionListener() {
@@ -191,9 +214,9 @@ public class JDProdutos extends javax.swing.JDialog {
                                     .addComponent(jLabel3)
                                     .addComponent(jTextFieldQtd)))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jRadioButton2)
+                                .addComponent(jRadioButtonDescricao)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButton1)
+                                .addComponent(jRadioButtonBarras)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jTextFieldPesquisar)
@@ -250,8 +273,8 @@ public class JDProdutos extends javax.swing.JDialog {
                 .addGap(4, 4, 4)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2))
+                    .addComponent(jRadioButtonBarras)
+                    .addComponent(jRadioButtonDescricao))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
@@ -298,13 +321,32 @@ public class JDProdutos extends javax.swing.JDialog {
             p.setValor(Double.parseDouble(jTextFieldPreco.getText().replace(",", ".")));
             p.setQtd(Double.parseDouble(jTextFieldQtd.getText().replace(",", ".")));
             
-            if(repProduto.inserir(p) == true){
-                JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
-                limparCampos();
-                habilitarCampos(false);
-                preencherJTable();
+            //verifica se o campo codigo é vazio
+            //se for insere
+            if(jTextFieldCodigo.getText().equals("")){
+                if(repProduto.inserir(p) == true){
+                    JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+                    limparCampos();
+                    habilitarCampos(false);
+                    produtos = repProduto.retornar();
+                    preencherJTable(produtos);
+                }else{
+                    JOptionPane.showMessageDialog(null, "Erro ao cadastrar.");
+                }
             }else{
-                JOptionPane.showMessageDialog(null, "Erro ao cadastrar.");
+                 // se for diferente de vazio quer dizer q ja existe um registro
+                 //estao preenchemos o atributo id e mandamos atualizar
+                 p.setId(Integer.parseInt(jTextFieldCodigo.getText()));
+                   
+                 if(repProduto.atualizar(p) == true){
+                    JOptionPane.showMessageDialog(null, "Alterado com sucesso!");
+                    limparCampos();
+                    habilitarCampos(false);
+                    produtos = repProduto.retornar();
+                    preencherJTable(produtos);
+                }else{
+                    JOptionPane.showMessageDialog(null, "Erro ao cadastrar.");
+                }
             }
         }
         
@@ -321,6 +363,44 @@ public class JDProdutos extends javax.swing.JDialog {
             jTextFieldBarras.setText(jTableLista.getValueAt(jTableLista.getSelectedRow(), 5).toString());
         }
     }//GEN-LAST:event_jTableListaMouseClicked
+
+    private void jButtonAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAlterarActionPerformed
+        // TODO add your handling code here:
+         // se o codigo n for vazio
+        if(!jTextFieldCodigo.getText().equals("")){
+        habilitarCampos(true);
+        jTextFieldDescricao.requestFocus();
+        }else{
+            JOptionPane.showMessageDialog(null, "Escolha um registro para alterar!");
+        }
+    }//GEN-LAST:event_jButtonAlterarActionPerformed
+
+    private void jButtonExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExcluirActionPerformed
+        // TODO add your handling code here:
+        
+        // se o codigo n for vazio
+        if(!jTextFieldCodigo.getText().equals("")){
+            repProduto.excluir(Integer.parseInt(jTextFieldCodigo.getText()));
+            
+            produtos = repProduto.retornar();
+            preencherJTable(produtos);
+        }else{
+            JOptionPane.showMessageDialog(null, "Escolha um registro para excluir!");
+        }
+    }//GEN-LAST:event_jButtonExcluirActionPerformed
+
+    private void jTextFieldPesquisarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPesquisarKeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            if(jRadioButtonBarras.isSelected()){
+            produtos = repProduto.pesquisar(jTextFieldPesquisar.getText(), "barras");
+            }else{
+            produtos = repProduto.pesquisar(jTextFieldPesquisar.getText(), "descricao");
+            }
+            
+            preencherJTable(produtos);
+        }
+    }//GEN-LAST:event_jTextFieldPesquisarKeyPressed
 
     /**
      * @param args the command line arguments
@@ -381,12 +461,13 @@ public class JDProdutos extends javax.swing.JDialog {
         jTextFieldPreco.setText("");
     }
     
-        public void preencherJTable(){
+        public void preencherJTable( List<Produto> produtos){
         
         DefaultTableModel modelo = (DefaultTableModel) jTableLista.getModel();
         modelo.setNumRows(0);
+           
         
-        for(Produto p : repProduto.retornar()){
+        for(Produto p : produtos){
             modelo.addRow(new Object[]{
                 //aqui vao ficar as colunas
                 p.getId(),
@@ -402,6 +483,7 @@ public class JDProdutos extends javax.swing.JDialog {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButtonAlterar;
     private javax.swing.JButton jButtonCancelar;
     private javax.swing.JButton jButtonExcluir;
@@ -415,8 +497,8 @@ public class JDProdutos extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButtonBarras;
+    private javax.swing.JRadioButton jRadioButtonDescricao;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
