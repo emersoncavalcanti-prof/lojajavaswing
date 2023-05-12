@@ -181,6 +181,29 @@ public class RepProdutos {
       }
         
   }
+  
+   public int retornarTotal(){
+      
+      con = ConexaoMySql.getConexao();
+      int ret = 0;
+      
+      String sql = "select count(*) as total from produtos";
+      
+      try{
+          Statement stmt = con.createStatement();
+          ResultSet rs = stmt.executeQuery(sql);
+          
+          while(rs.next()){
+              ret = rs.getInt("total");             
+          }            
+      }catch(SQLException ex){
+          return ret;
+      }
+      
+      ConexaoMySql.fecharConexao();
+      
+      return ret;
+  }  
     
     
 }

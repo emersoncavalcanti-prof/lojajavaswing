@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import jdk.nashorn.internal.scripts.JO;
 import model.Produto;
 import repositorio.RepProdutos;
 
@@ -378,15 +379,21 @@ public class JDProdutos extends javax.swing.JDialog {
     private void jButtonExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExcluirActionPerformed
         // TODO add your handling code here:
         
-        // se o codigo n for vazio
-        if(!jTextFieldCodigo.getText().equals("")){
-            repProduto.excluir(Integer.parseInt(jTextFieldCodigo.getText()));
-            
-            produtos = repProduto.retornar();
-            preencherJTable(produtos);
-        }else{
-            JOptionPane.showMessageDialog(null, "Escolha um registro para excluir!");
+        
+        if(JOptionPane.showConfirmDialog(null, "Deseja excluir o item ("+jTextFieldDescricao.getText()+")  ? ") == JOptionPane.YES_OPTION){
+       
+            // se o codigo n for vazio
+            if(!jTextFieldCodigo.getText().equals("")){
+                repProduto.excluir(Integer.parseInt(jTextFieldCodigo.getText()));
+
+                produtos = repProduto.retornar();
+                preencherJTable(produtos);
+            }else{
+                JOptionPane.showMessageDialog(null, "Escolha um registro para excluir!");
+            }
         }
+        
+       
     }//GEN-LAST:event_jButtonExcluirActionPerformed
 
     private void jTextFieldPesquisarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPesquisarKeyPressed

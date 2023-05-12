@@ -4,6 +4,8 @@
  */
 package view;
 
+import javax.swing.JOptionPane;
+import repositorio.RepProdutos;
 import sun.rmi.runtime.Log;
 
 /**
@@ -12,11 +14,19 @@ import sun.rmi.runtime.Log;
  */
 public class JFramePrincipal extends javax.swing.JFrame {
 
+    RepProdutos repProdutos = new RepProdutos();
+            
+    
     /**
      * Creates new form JFramePrincipal
      */
     public JFramePrincipal() {
         initComponents();
+        atualizaResumo();
+    }
+    
+    public void atualizaResumo(){
+       jLabelQtdProd.setText(String.valueOf(repProdutos.retornarTotal()));  
     }
 
     /**
@@ -38,7 +48,7 @@ public class JFramePrincipal extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        jLabelQtdProd = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -132,10 +142,10 @@ public class JFramePrincipal extends javax.swing.JFrame {
         jLabel7.setText("Produtos");
         jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 40, -1, -1));
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel8.setText("0");
-        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 0, -1, -1));
+        jLabelQtdProd.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabelQtdProd.setForeground(new java.awt.Color(102, 102, 102));
+        jLabelQtdProd.setText("0");
+        jPanel2.add(jLabelQtdProd, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 0, -1, -1));
 
         jPanel6.setBackground(new java.awt.Color(51, 51, 51));
         jPanel6.setForeground(new java.awt.Color(51, 51, 51));
@@ -174,6 +184,7 @@ public class JFramePrincipal extends javax.swing.JFrame {
         jMenuItem3.setText("Forma de Pagamento");
         jMenu2.add(jMenuItem3);
 
+        jMenuItemProdutos.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
         jMenuItemProdutos.setText("Produtos");
         jMenuItemProdutos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -239,6 +250,8 @@ public class JFramePrincipal extends javax.swing.JFrame {
             jDClientes.setVisible(true);
         }finally{
             jDClientes.dispose();
+            atualizaResumo();
+            
         }
     }
     
@@ -250,6 +263,7 @@ public class JFramePrincipal extends javax.swing.JFrame {
             jDProdutos.setVisible(true);
         }finally{
             jDProdutos.dispose();
+            atualizaResumo();
         }
     }
     
@@ -308,7 +322,7 @@ public class JFramePrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabelQtdProd;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
