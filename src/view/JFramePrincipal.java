@@ -302,6 +302,18 @@ public class JFramePrincipal extends javax.swing.JFrame {
         }
     }
     
+        public void chamarTelaVenda(){
+        
+        JDVenda jDVenda = new JDVenda(this, false);
+        try{
+            jDVenda.setModal(true);
+            jDVenda.setVisible(true);
+        }finally{
+            jDVenda.dispose();
+            atualizaResumo();
+        }
+    }
+    
     private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
         // TODO add your handling code here:
         chamarTelaCliente();
@@ -319,6 +331,7 @@ public class JFramePrincipal extends javax.swing.JFrame {
 
     private void jPanel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel7MouseClicked
         // TODO add your handling code here:
+        chamarTelaVenda();
     }//GEN-LAST:event_jPanel7MouseClicked
 
     /**
