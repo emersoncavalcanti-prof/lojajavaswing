@@ -9,6 +9,8 @@ public class ItemVenda {
     private double qtd;
     private double valortotal;
     private int produto_id;
+    private String descricao;
+    
 
     public ItemVenda() {
     }
@@ -95,6 +97,20 @@ public class ItemVenda {
      */
     public void setProduto_id(int produto_id) {
         this.produto_id = produto_id;
+    }
+
+    /**
+     * @return the descricao
+     */
+    public String getDescricao() {
+        return descricao;
+    }
+
+    /**
+     * @param descricao the descricao to set
+     */
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
     
     

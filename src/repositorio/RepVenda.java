@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import model.Produto;
+import model.Venda;
 
 public class RepVenda {
     
@@ -56,28 +57,23 @@ public class RepVenda {
        return id;
     }
     
-  public List<Produto> retornar(){
+  public List<Venda> retornar(){
       
       con = ConexaoMySql.getConexao();
-      List<Produto> produtos = new ArrayList<>();
+      List<Venda> vendas = new ArrayList<>();
       
-      String sql = "select * from produtos order by id desc";
+      String sql = "select * from venda order by id desc";
       
       try{
           Statement stmt = con.createStatement();
           ResultSet rs = stmt.executeQuery(sql);
           while(rs.next()){
               
-              Produto produto = new Produto();
+              Venda venda = new Venda();
               
-              produto.setId(rs.getInt("id"));
-              produto.setDescricao(rs.getString("descricao"));
-              produto.setQtd(rs.getDouble("qtd"));
-              produto.setValor(rs.getDouble("valor"));
-              produto.setCodbarra(rs.getString("codbarra"));
-              produto.setPeso(rs.getDouble("peso"));
+              venda.setData(rs.getString("data"));
               
-              produtos.add(produto);
+              vendas.add(venda);
           }            
       }catch(SQLException ex){
           return null;
@@ -85,7 +81,7 @@ public class RepVenda {
       
       ConexaoMySql.fecharConexao();
       
-      return produtos;
+      return vendas;
   }  
   
       public boolean cancelar(int id) {

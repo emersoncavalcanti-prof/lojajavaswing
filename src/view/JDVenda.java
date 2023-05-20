@@ -1,12 +1,19 @@
 package view;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Fpag;
 import model.ItemVenda;
 import model.Produto;
+import model.Venda;
 import repositorio.RepItemVenda;
+import repositorio.RepPagamento;
 import repositorio.RepProdutos;
 import repositorio.RepVenda;
+import utils.Utils;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -22,7 +29,11 @@ public class JDVenda extends javax.swing.JDialog {
     int idVenda;
     RepVenda repVenda = new RepVenda();
     RepItemVenda repItemVenda = new RepItemVenda();
+    RepPagamento repPag = new RepPagamento();
     RepProdutos repProd = new RepProdutos();
+    Utils util = new Utils();
+    double total;
+    
 
     /**
      * Creates new form JDVenda
@@ -32,6 +43,63 @@ public class JDVenda extends javax.swing.JDialog {
         initComponents();
         habilitarCampos(false);
         jLabelVenda.setText("INICIE UMA VENDA");
+        
+       /* 
+            IGNORAR TESTE
+        List<Venda> vendas = repVenda.retornar();
+        for(Venda v : vendas){
+            util.formatarData(v.getData());
+        }*/
+        
+
+    }
+    
+        public void preencherItens( List<ItemVenda> itens){
+        
+        DefaultTableModel modelo = (DefaultTableModel) jTableItens.getModel();
+        modelo.setNumRows(0);
+           
+        total = 0;
+        
+        for(ItemVenda i : itens){
+            
+            total += i.getValortotal();
+            
+            modelo.addRow(new Object[]{
+                //aqui vao ficar as colunas
+                i.getId(),
+                i.getDescricao(),
+                i.getQtd(),
+                i.getValoruni(),
+                i.getValortotal(),
+               
+            });
+        }
+        
+        jLabelTotal.setText(util.formatarMoeda(total));
+        
+    }
+        
+        public void limparJtableItens(){
+            DefaultTableModel modelo = (DefaultTableModel) jTableItens.getModel();
+            modelo.setNumRows(0);
+        }
+        
+        public void preencherPag( List<Fpag> pagamentos){
+        
+        DefaultTableModel modelo = (DefaultTableModel) jTablePagamento.getModel();
+        modelo.setNumRows(0);
+           
+        
+        for(Fpag f : pagamentos){
+            modelo.addRow(new Object[]{
+                //aqui vao ficar as colunas
+                f.getId(),
+                f.getDescricao(),
+   
+            });
+        }
+        
     }
     
     public void habilitarCampos(boolean valor){
@@ -90,11 +158,11 @@ public class JDVenda extends javax.swing.JDialog {
 
             },
             new String [] {
-                "#", "DESCRICAO", "QTD", "VALOR"
+                "#", "DESCRICAO", "QTD", "VALOR", "TOTAL"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, false
+                false, false, true, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -317,14 +385,17 @@ public class JDVenda extends javax.swing.JDialog {
     private void jButtonNovaVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNovaVendaActionPerformed
         habilitarCampos(true);
         jTextFieldQtd.setText("1");
+        jTextFieldDescricao.requestFocus();
         
         idVenda = repVenda.inserir();
+        total = 0;
         
         jLabelVenda.setText("VENDA: 00"+idVenda);
     }//GEN-LAST:event_jButtonNovaVendaActionPerformed
 
     private void jButtonFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFinalizarActionPerformed
         // TODO add your handling code here:
+        preencherPag(repPag.retornar());
     }//GEN-LAST:event_jButtonFinalizarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
@@ -333,15 +404,23 @@ public class JDVenda extends javax.swing.JDialog {
         habilitarCampos(false);
         jTextFieldQtd.setText("");
         jLabelVenda.setText("INICIE UMA VENDA");
+        limparJtableItens();
+        total = 0;
         
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void jTextFieldDescricaoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldDescricaoKeyPressed
           if(evt.getKeyCode() == KeyEvent.VK_ENTER){
            
+              if(!jTextFieldDescricao.getText().equals("")){
+                  
               List<Produto> produtos = repProd.pesquisar(jTextFieldDescricao.getText(), "barras");
-              
-              if(produtos.size() == 1){
+              if(produtos.size() == 0){
+                  JOptionPane.showMessageDialog(null, "Produto não encontrado");
+                  jTextFieldDescricao.setText("");
+                  jTextFieldDescricao.requestFocus();
+              }
+              else if(produtos.size() == 1){
                 
                   for(Produto p : produtos){
                       
@@ -353,9 +432,15 @@ public class JDVenda extends javax.swing.JDialog {
                       i.setValortotal(i.getQtd()*i.getValoruni());
                       
                       repItemVenda.inserir(i);
+                      jTextFieldQtd.setText("1");
+                      jTextFieldDescricao.setText("");
+                      jTextFieldDescricao.requestFocus();
+                      preencherItens(repItemVenda.retornar(String.valueOf(idVenda)));
                   }
               }
+              }
           }
+          
     }//GEN-LAST:event_jTextFieldDescricaoKeyPressed
 
     /**

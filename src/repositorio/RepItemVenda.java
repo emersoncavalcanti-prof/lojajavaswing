@@ -53,28 +53,28 @@ public class RepItemVenda {
        return true;
     }
     
-  public List<Produto> retornar(){
+  public List<ItemVenda> retornar(String idVenda){
       
       con = ConexaoMySql.getConexao();
-      List<Produto> produtos = new ArrayList<>();
+      List<ItemVenda> itens = new ArrayList<>();
       
-      String sql = "select * from produtos order by id desc";
+      String sql = "select i.*,p.descricao from itemvenda i, produtos p where i.produtos_id = p.id and i.venda_id  = "+idVenda+" order by id desc";
       
       try{
           Statement stmt = con.createStatement();
           ResultSet rs = stmt.executeQuery(sql);
           while(rs.next()){
               
-              Produto produto = new Produto();
+              ItemVenda item = new ItemVenda();
               
-              produto.setId(rs.getInt("id"));
-              produto.setDescricao(rs.getString("descricao"));
-              produto.setQtd(rs.getDouble("qtd"));
-              produto.setValor(rs.getDouble("valor"));
-              produto.setCodbarra(rs.getString("codbarra"));
-              produto.setPeso(rs.getDouble("peso"));
+              item.setId(rs.getInt("id"));
+              item.setDescricao(rs.getString("descricao"));
+              item.setQtd(rs.getDouble("qtd"));
+              item.setValoruni(rs.getDouble("valoruni"));
+              item.setValortotal(rs.getDouble("valortotal"));
+
               
-              produtos.add(produto);
+              itens.add(item);
           }            
       }catch(SQLException ex){
           return null;
@@ -82,7 +82,7 @@ public class RepItemVenda {
       
       ConexaoMySql.fecharConexao();
       
-      return produtos;
+      return itens;
   }  
   
       public boolean cancelar(int id) {
