@@ -1,14 +1,12 @@
 package view;
 
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Fpag;
 import model.ItemVenda;
 import model.Produto;
-import model.Venda;
 import repositorio.RepItemVenda;
 import repositorio.RepPagamento;
 import repositorio.RepProdutos;
@@ -44,14 +42,6 @@ public class JDVenda extends javax.swing.JDialog {
         habilitarCampos(false);
         jLabelVenda.setText("INICIE UMA VENDA");
         
-       /* 
-            IGNORAR TESTE
-        List<Venda> vendas = repVenda.retornar();
-        for(Venda v : vendas){
-            util.formatarData(v.getData());
-        }*/
-        
-
     }
     
         public void preencherItens( List<ItemVenda> itens){

@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import jdk.nashorn.internal.scripts.JO;
 import model.Produto;
 import repositorio.RepProdutos;
 

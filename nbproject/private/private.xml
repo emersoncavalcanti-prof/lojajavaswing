@@ -2,15 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Aluno/Documents/NetBeansProjects/JavaApplication7/src/utils/Utils.java</file>
-            <file>file:/C:/Users/Aluno/Documents/NetBeansProjects/JavaApplication7/src/view/JDVenda.java</file>
-            <file>file:/C:/Users/Aluno/Documents/NetBeansProjects/JavaApplication7/src/view/JFramePrincipal.java</file>
-            <file>file:/C:/Users/Aluno/Documents/NetBeansProjects/JavaApplication7/src/repositorio/RepVenda.java</file>
-            <file>file:/C:/Users/Aluno/Documents/NetBeansProjects/JavaApplication7/src/repositorio/RepPagamento.java</file>
-            <file>file:/C:/Users/Aluno/Documents/NetBeansProjects/JavaApplication7/src/repositorio/RepProdutos.java</file>
-            <file>file:/C:/Users/Aluno/Documents/NetBeansProjects/JavaApplication7/src/view/JDProdutos.java</file>
-            <file>file:/C:/Users/Aluno/Documents/NetBeansProjects/JavaApplication7/src/repositorio/RepItemVenda.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

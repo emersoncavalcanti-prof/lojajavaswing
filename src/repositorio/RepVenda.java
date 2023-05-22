@@ -71,7 +71,7 @@ public class RepVenda {
               
               Venda venda = new Venda();
               
-              venda.setData(rs.getString("data"));
+              venda.setData(rs.getTimestamp("data").toLocalDateTime());
               
               vendas.add(venda);
           }            

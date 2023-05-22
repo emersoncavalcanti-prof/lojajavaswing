@@ -1,12 +1,13 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Venda {
 
     private int id;
     private double total;
-    private String data;
+    private LocalDateTime data;
     private int cliente_id;
     private int fpag_id;
     private String fpag;
@@ -47,14 +48,14 @@ public class Venda {
     /**
      * @return the data
      */
-    public String getData() {
+    public LocalDateTime getData() {
         return data;
     }
 
     /**
      * @param data the data to set
      */
-    public void setData(String data) {
+    public void setData(LocalDateTime data) {
         this.data = data;
     }
 
