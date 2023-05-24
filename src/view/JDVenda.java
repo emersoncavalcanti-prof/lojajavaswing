@@ -521,7 +521,13 @@ public class JDVenda extends javax.swing.JDialog {
     }//GEN-LAST:event_jTextFieldPagoKeyPressed
 
     private void jButtonNovaVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNovaVendasActionPerformed
-
+        JDListaVendas jdListaVendas = new JDListaVendas(null, false);
+        try{
+            jdListaVendas.setModal(true);
+            jdListaVendas.setVisible(true);
+        }finally{
+            jdListaVendas.dispose();
+        } 
     }//GEN-LAST:event_jButtonNovaVendasActionPerformed
 
     private void jTablePagamentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePagamentoMouseClicked
