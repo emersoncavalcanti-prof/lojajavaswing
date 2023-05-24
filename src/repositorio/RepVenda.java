@@ -57,12 +57,47 @@ public class RepVenda {
        return id;
     }
     
+     public boolean finalizar(Venda venda) {
+
+        con = ConexaoMySql.getConexao();
+        String sql = "update venda set total = ?, "
+                + "fpag_id = ?,status = ? where id = ?";
+        try {
+            con.setAutoCommit(false);
+            PreparedStatement stmt = con.prepareStatement(sql);
+
+            stmt.setDouble(1, venda.getTotal());
+            stmt.setInt(2, venda.getFpag_id());
+            stmt.setString(3, "F");
+            stmt.setInt(4, venda.getId());
+             
+            stmt.execute();
+
+            con.commit();
+            ConexaoMySql.fecharConexao();
+
+            return true;
+
+        } catch (SQLException ex) {
+            try {
+                con.rollback();
+                System.err.println(ex);
+                return false;
+            } catch (SQLException ex1) {
+                System.err.println(ex1);
+            }
+
+            return false;
+        }
+
+    }  
+    
   public List<Venda> retornar(){
       
       con = ConexaoMySql.getConexao();
       List<Venda> vendas = new ArrayList<>();
       
-      String sql = "select * from venda order by id desc";
+      String sql = "select v.*,f.descricao,c.nome from venda v,fpag f, clientes c where  v.fpag_id = f.id and v.clientes_id = c.id and v.status <> 'I' order by v.id desc;";
       
       try{
           Statement stmt = con.createStatement();
@@ -71,7 +106,14 @@ public class RepVenda {
               
               Venda venda = new Venda();
               
+              venda.setId(rs.getInt("id"));
               venda.setData(rs.getTimestamp("data").toLocalDateTime());
+              venda.setTotal(rs.getDouble("total"));
+              venda.setCliente(rs.getString("nome"));
+              venda.setFpag(rs.getString("descricao"));
+              venda.setCliente_id(rs.getInt("clientes_id"));
+              venda.setFpag_id(rs.getInt("fpag_id"));
+              venda.setStatus(rs.getString("status"));
               
               vendas.add(venda);
           }            

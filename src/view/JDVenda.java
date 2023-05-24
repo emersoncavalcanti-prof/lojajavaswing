@@ -7,6 +7,7 @@ import javax.swing.table.DefaultTableModel;
 import model.Fpag;
 import model.ItemVenda;
 import model.Produto;
+import model.Venda;
 import repositorio.RepItemVenda;
 import repositorio.RepPagamento;
 import repositorio.RepProdutos;
@@ -24,7 +25,7 @@ import utils.Utils;
  */
 public class JDVenda extends javax.swing.JDialog {
     
-    int idVenda;
+    int idVenda,idFpag;
     RepVenda repVenda = new RepVenda();
     RepItemVenda repItemVenda = new RepItemVenda();
     RepPagamento repPag = new RepPagamento();
@@ -42,9 +43,70 @@ public class JDVenda extends javax.swing.JDialog {
         habilitarCampos(false);
         jLabelVenda.setText("INICIE UMA VENDA");
         
+        
     }
     
-        public void preencherItens( List<ItemVenda> itens){
+    public void limparDadosVenda(){
+       habilitarCampos(false);
+       jTextFieldQtd.setText("");
+       jLabelVenda.setText("INICIE UMA VENDA");
+       limparJtableItens();
+       total = 0;
+       idFpag = 0;
+       jTextFieldTroco.setText("");
+       jTextFieldPago.setText("");
+       jTextFieldDescricao.setText("");
+       
+        DefaultTableModel modelo = (DefaultTableModel) jTablePagamento.getModel();
+        modelo.setNumRows(0);
+        
+        
+        
+        
+    }
+    
+    public void prepararFinalizacao(){
+        double troco = 0;
+  
+        if(!jTextFieldPago.getText().equals("")){
+            double valorPago = Double.parseDouble(jTextFieldPago.getText());
+            if(valorPago > total){
+                troco = valorPago - total;
+                jTextFieldTroco.setText(util.formatarMoeda(troco));
+
+            }else if(valorPago == total){
+                jTextFieldTroco.setText("0,00");
+                
+            }else{
+                JOptionPane.showMessageDialog(null, "O valor pago deve ser maior ou igual ao total.");
+                jTextFieldPago.requestFocus();
+            }
+        }else{
+             JOptionPane.showMessageDialog(null, "Para prosseguir digite o valor que foi pago.");
+             jTextFieldPago.requestFocus();
+        }
+    }
+    
+    public void finalizar(){
+        
+  
+        
+       if(!jTextFieldTroco.getText().equals("")){
+            
+            Venda venda = new Venda();
+            venda.setId(idVenda);
+            venda.setTotal(total);
+            venda.setFpag_id(idFpag);
+            
+            if(repVenda.finalizar(venda)){
+                limparDadosVenda();
+            }
+       }
+        
+        
+    }
+    
+    public void preencherItens( List<ItemVenda> itens){
         
         DefaultTableModel modelo = (DefaultTableModel) jTableItens.getModel();
         modelo.setNumRows(0);
@@ -140,6 +202,7 @@ public class JDVenda extends javax.swing.JDialog {
         jTextFieldQtd = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabelVenda = new javax.swing.JLabel();
+        jButtonNovaVendas = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -215,10 +278,16 @@ public class JDVenda extends javax.swing.JDialog {
         jLabelTotal.setText("0,00");
 
         jTextFieldPago.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jTextFieldPago.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldPagoKeyPressed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel5.setText("FORMA DE PAGAMENTO");
 
+        jTextFieldTroco.setEditable(false);
         jTextFieldTroco.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -243,6 +312,11 @@ public class JDVenda extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
+        jTablePagamento.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTablePagamentoMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTablePagamento);
         if (jTablePagamento.getColumnModel().getColumnCount() > 0) {
             jTablePagamento.getColumnModel().getColumn(0).setPreferredWidth(5);
@@ -256,6 +330,14 @@ public class JDVenda extends javax.swing.JDialog {
 
         jLabelVenda.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabelVenda.setText("VENDA: 000");
+
+        jButtonNovaVendas.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButtonNovaVendas.setText("VENDAS");
+        jButtonNovaVendas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNovaVendasActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -271,8 +353,19 @@ public class JDVenda extends javax.swing.JDialog {
                                 .addGap(18, 18, 18)
                                 .addComponent(jTextFieldNomeCli))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 2, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jTextFieldQtd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(7, 7, 7))
+                                    .addComponent(jLabel8))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addGap(206, 206, 206))
+                                    .addComponent(jTextFieldDescricao)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -284,23 +377,13 @@ public class JDVenda extends javax.swing.JDialog {
                                             .addComponent(jTextFieldTroco, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jLabel7)))
                                     .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jButtonNovaVendas)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jButtonCancelar)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jButtonFinalizar)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jButtonNovaVenda)
-                                        .addGap(41, 41, 41))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jTextFieldQtd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(7, 7, 7))
-                                    .addComponent(jLabel8))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(206, 206, 206))
-                                    .addComponent(jTextFieldDescricao))))
+                                        .addComponent(jButtonNovaVenda)))))
                         .addGap(32, 32, 32))
                     .addComponent(jLabel2))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -321,7 +404,7 @@ public class JDVenda extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabelVenda)
                 .addGap(4, 4, 4)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -329,7 +412,7 @@ public class JDVenda extends javax.swing.JDialog {
                             .addComponent(jLabel3)
                             .addComponent(jLabelTotal))
                         .addContainerGap(13, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
@@ -364,8 +447,9 @@ public class JDVenda extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonCancelar)
                             .addComponent(jButtonNovaVenda)
-                            .addComponent(jButtonFinalizar))
-                        .addGap(25, 25, 25))))
+                            .addComponent(jButtonFinalizar)
+                            .addComponent(jButtonNovaVendas))
+                        .addGap(29, 29, 29))))
         );
 
         pack();
@@ -379,23 +463,20 @@ public class JDVenda extends javax.swing.JDialog {
         
         idVenda = repVenda.inserir();
         total = 0;
-        
+        idFpag = 0;
         jLabelVenda.setText("VENDA: 00"+idVenda);
+        preencherPag(repPag.retornar());
     }//GEN-LAST:event_jButtonNovaVendaActionPerformed
 
     private void jButtonFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFinalizarActionPerformed
-        // TODO add your handling code here:
-        preencherPag(repPag.retornar());
+        finalizar();
+   
     }//GEN-LAST:event_jButtonFinalizarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
         // TODO add your handling code here:
-        repVenda.cancelar(idVenda);
-        habilitarCampos(false);
-        jTextFieldQtd.setText("");
-        jLabelVenda.setText("INICIE UMA VENDA");
-        limparJtableItens();
-        total = 0;
+       repVenda.cancelar(idVenda);
+       limparDadosVenda();
         
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
@@ -432,6 +513,22 @@ public class JDVenda extends javax.swing.JDialog {
           }
           
     }//GEN-LAST:event_jTextFieldDescricaoKeyPressed
+
+    private void jTextFieldPagoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPagoKeyPressed
+         if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+             prepararFinalizacao();
+         }
+    }//GEN-LAST:event_jTextFieldPagoKeyPressed
+
+    private void jButtonNovaVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNovaVendasActionPerformed
+
+    }//GEN-LAST:event_jButtonNovaVendasActionPerformed
+
+    private void jTablePagamentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePagamentoMouseClicked
+         if(jTablePagamento.getSelectedRow() != - 1){
+            idFpag = Integer.parseInt(jTablePagamento.getValueAt(jTablePagamento.getSelectedRow(), 0).toString());
+         }
+    }//GEN-LAST:event_jTablePagamentoMouseClicked
 
     /**
      * @param args the command line arguments
@@ -479,6 +576,7 @@ public class JDVenda extends javax.swing.JDialog {
     private javax.swing.JButton jButtonCancelar;
     private javax.swing.JButton jButtonFinalizar;
     private javax.swing.JButton jButtonNovaVenda;
+    private javax.swing.JButton jButtonNovaVendas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

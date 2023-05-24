@@ -1,7 +1,6 @@
 package model;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class Venda {
 
@@ -12,7 +11,9 @@ public class Venda {
     private int fpag_id;
     private String fpag;
     private String cliente;    
+    private String status;  
 
+    
     public Venda() {
     }
 
@@ -113,6 +114,20 @@ public class Venda {
      */
     public void setCliente(String cliente) {
         this.cliente = cliente;
+    }
+
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
     }
     
     
